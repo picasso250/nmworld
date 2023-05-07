@@ -11,6 +11,8 @@ var config = {
 
 var game = new Phaser.Game(config);
 
+var logo;
+
 function preload ()
 {
     // 加载图片资源
@@ -20,10 +22,12 @@ function preload ()
 function create ()
 {
     // 添加图片到场景中
-    this.add.image(400, 300, 'logo');
+    logo = this.add.image(400, 300, 'logo');
 }
 
 function update ()
 {
-    // 游戏循环更新
+    // 随机移动图片
+    logo.x += Phaser.Math.Between(-5, 5);
+    logo.y += Phaser.Math.Between(-5, 5);
 }
