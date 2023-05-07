@@ -11,23 +11,23 @@ var config = {
 
 var game = new Phaser.Game(config);
 
-var logo;
+var role;
 
 function preload ()
 {
     // 加载图片资源
-    this.load.image('logo', 'assets/logo.png');
+    this.load.image('role', 'assets/role@4.png');
 }
 
 function create ()
 {
     // 添加图片到场景中
-    logo = this.add.image(400, 300, 'logo');
+    role = this.add.image(400, 300, 'role');
 }
 
 function update ()
 {
     // 随机移动图片
-    logo.x += Phaser.Math.Between(-5, 5);
-    logo.y += Phaser.Math.Between(-5, 5);
+    role.x += Phaser.Math.Between(-5, 5);
+    role.y += Phaser.Math.Between(-5, 5);
 }
