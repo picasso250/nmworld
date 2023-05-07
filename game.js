@@ -28,6 +28,10 @@ function create ()
 function update ()
 {
     // 随机移动图片
-    role.x += Phaser.Math.Between(-5, 5);
-    role.y += Phaser.Math.Between(-5, 5);
+    var angle = Phaser.Math.Angle.Between(0, 0, Phaser.Math.Between(-100, 100), Phaser.Math.Between(-100, 100));
+    var distance = Phaser.Math.Between(5, 20);
+    var vector = new Phaser.Math.Vector2(distance, 0);
+    Phaser.Math.Rotate(vector, angle);
+    role.x += vector.x;
+    role.y += vector.y;
 }
