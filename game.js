@@ -1,7 +1,10 @@
+var gameWidth= 800;
+var gameHeight= 600;
+
 var config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 600,
+    width: gameWidth,
+    height: gameHeight,
     scene: {
         preload: preload,
         create: create,
@@ -42,6 +45,18 @@ function updateRolePositionAndDirection(role, angle, delta) {
     Phaser.Math.Rotate(vector, angle);
     role.x += vector.x;
     role.y += vector.y;
+
+    // 判断角色是否超出屏幕边界
+    if (role.x < 0) {
+        role.x = 0;
+    } else if (role.x > gameWidth) {
+        role.x = gameWidth;
+    }
+    if (role.y < 0) {
+        role.y = 0;
+    } else if (role.y > gameHeight) {
+        role.y = gameHeight;
+    }
 }
 
 // 改变角色方向
