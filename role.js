@@ -8,7 +8,7 @@ class Role extends Phaser.GameObjects.Container {
 
         this.direction = 0;
         this.hunger = hunger;
-        this.hungerText = scene.add.text(-25, -50, ``, { fontSize: '16px', fill: '#fff' });
+        this.hungerText = scene.add.text(-15, -80, ``, { fontSize: '16px', fill: '#fff' });
         this.add(this.hungerText);
 
         this.statusText = scene.add.text(-25, -25, ``, { fontSize: '16px', fill: '#fff' });
@@ -154,11 +154,6 @@ class Role extends Phaser.GameObjects.Container {
     }
 
     updateHungerText() {
-        if (this.getBounds().contains(this.scene.input.mousePointer.x, this.scene.input.mousePointer.y)) {
-            this.hungerText.setText(`Hunger: ${Math.floor(this.hunger)}`);
-            this.scene.time.delayedCall(1000, () => {
-                this.hungerText.setText('');
-            });
-        }
+        this.hungerText.setText(`饱:${Math.floor(this.hunger)}`);
     }
 }
