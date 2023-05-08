@@ -10,6 +10,8 @@ class Role extends Phaser.GameObjects.Sprite {
 
         this.last_change_direction_time = 0;
         this.change_time_interval = 1000; // ms
+
+        this.hungerSpeed = 1/1000; // 每毫秒递减
     }
 
     update(time, delta) {
@@ -21,6 +23,12 @@ class Role extends Phaser.GameObjects.Sprite {
 
         // 更新饥饿度文本
         this.updateHungerText();
+
+        // 递减饥饿度
+        this.hunger -= this.hungerSpeed * delta;
+        if (this.hunger <= 0) {
+            this.hunger = 0;
+        }
     }
 
     // 更新角色位置和方向
