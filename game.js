@@ -22,6 +22,7 @@ function preload() {
 
 
 var fpsText;
+var msgText;
 function create() {
 
     // 添加图片到场景中
@@ -40,10 +41,25 @@ function create() {
     }, this);
 
     // 创建文本对象
-    fpsText = this.add.text(10, 10, 'FPS: 0', { font: '16px Arial', fill: '#ffffff' });
+    fpsText = this.add.text(gameWidth - 80, 10, 'FPS: 0', { font: '16px Arial', fill: '#ffffff' });
+    msgText = this.add.text(10, 10, '', { font: '16px Arial', fill: '#ffffff' });
 }
+var messages = [];
 
+function addMessage(msg) {
+    messages.push(msg);
+    msgText.setText(messages.join("\n"));
+    if (msgText.displayHeight > gameHeight - 20) {
+        messages.shift();
+        msgText.setText(messages.join("\n"));
+    }
+    msgText.visible = true;
+    setTimeout(function () {
+        msgText.visible = false;
+    }, 3000); // 3 秒钟后移除最早的一条消息
+}
 function update(time, delta) {
+
     // 更新实时帧数
     fpsText.setText('FPS: ' + Math.round(game.loop.actualFps));
 
