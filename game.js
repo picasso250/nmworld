@@ -26,8 +26,8 @@ var msgText;
 function create() {
 
     // 添加图片到场景中
-    role1 = new Role(this, 400, 300, 'role', 11, 50);
-    role2 = new Role(this, 500, 400, 'role', 22, 50);
+    role1 = new Role(this, 400, 300, 'role', 11);
+    role2 = new Role(this, 500, 400, 'role', 22);
 
     this.roleGroup = this.add.group();
     this.roleGroup.add(role1);

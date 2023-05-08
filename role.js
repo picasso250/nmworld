@@ -17,7 +17,7 @@ class Role extends Phaser.GameObjects.Container {
         this.last_change_direction_time = 0;
         this.change_time_interval = 1000; // ms
 
-        this.hungerSpeed = 22 / 1000; // 每毫秒递减
+        this.hungerSpeed = 7 / 1000; // 每毫秒递减
 
         this.maxSpeed = 0.9;
 
@@ -91,7 +91,6 @@ class Role extends Phaser.GameObjects.Container {
      */
     updateHunger() {
         this.isEating = true; // 标记正在吃东西
-        this.hunger += this.target.nutrition;
         this.target.locked = true; // 锁定食物
     }
 
@@ -112,6 +111,7 @@ class Role extends Phaser.GameObjects.Container {
             dotTween.stop(); // 停止动画
             this.statusText.alpha = 0;
             this.isEating = false; // 标记吃东西结束
+            this.hunger += this.target.nutrition;
             if (this.target) {
                 this.target.destroy(); // 销毁食物
             }
