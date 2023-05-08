@@ -19,13 +19,13 @@ class Role extends Phaser.GameObjects.Container {
 
         this.hungerSpeed = 7 / 1000; // 每毫秒递减
 
-        this.maxSpeed = 0.9;
+        this.maxSpeed = 1.9;
 
     }
 
     update(time, delta) {
         // 如果饥饿度小于等于0，则将目标设为最近的一个食物
-        if (this.hunger <= 0) {
+        if (this.hunger <= 0 && !this.target) {
             var minDistance = Number.MAX_VALUE;
             var targetFood = null;
             this.scene.foodGroup.children.iterate(function (food) {
@@ -114,6 +114,7 @@ class Role extends Phaser.GameObjects.Container {
             this.hunger += this.target.nutrition;
             if (this.target) {
                 this.target.destroy(); // 销毁食物
+                this.target=null;
             }
         });
     }
