@@ -5,8 +5,4 @@ class Food extends Phaser.GameObjects.Sprite {
         scene.add.existing(this);
     }
 
-    eaten() {
-        this.destroy();
-    }
-
 }
