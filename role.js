@@ -11,15 +11,49 @@ class Role extends Phaser.GameObjects.Sprite {
         this.last_change_direction_time = 0;
         this.change_time_interval = 1000; // ms
 
-        this.hungerSpeed = 1/1000; // 每毫秒递减
+        this.hungerSpeed = 55 / 1000; // 每毫秒递减
+
+        this.maxSpeed = 0.9
     }
 
     update(time, delta) {
-        // 改变角色方向
-        this.changeRoleDirection(time);
+        // 如果饥饿度小于等于0，则将目标设为最近的一个食物
+        if (this.hunger <= 0) {
+            var minDistance = Number.MAX_VALUE;
+            var targetFood = null;
+            for (var i = 0; i < food_list.length; i++) {
+                var food = food_list[i];
+                var distance = Phaser.Math.Distance.Between(this.x, this.y, food.x, food.y);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    targetFood = food;
+                }
+            }
+            if (targetFood) {
+                this.target = targetFood;
+            }
+        }
 
-        // 更新角色位置和方向
-        this.updateRolePositionAndDirection(delta);
+        // 如果有目标，则朝目标移动
+        if (this.target) {
+            var distance = Phaser.Math.Distance.Between(this.x, this.y, this.target.x, this.target.y);
+            if (distance > 10) {
+                var angle = Phaser.Math.Angle.Between(this.x, this.y, this.target.x, this.target.y);
+                this.direction = angle;
+                var vector = new Phaser.Math.Vector2(this.maxSpeed * delta / 16.6667, 0); // 16.6667 是 1000 / 60，即每帧的时间
+                Phaser.Math.Rotate(vector, this.direction);
+                this.x += vector.x;
+                this.y += vector.y;
+            } else {
+                // 如果到达目标，则将目标设为 null
+                this.target = null;
+            }
+        } else {
+            // 如果没有目标，则随机移动
+            // 改变角色方向
+            this.changeRoleDirection(time);
+            this.updateRolePositionAndDirection(delta);
+        }
 
         // 更新饥饿度文本
         this.updateHungerText();
@@ -31,11 +65,10 @@ class Role extends Phaser.GameObjects.Sprite {
         }
     }
 
-    // 更新角色位置和方向
+    // 更新角色位置
     updateRolePositionAndDirection(delta) {
-        var speed = 0.2;
-        var distance = Phaser.Math.Between(1, 5);
-        var vector = new Phaser.Math.Vector2(distance * speed * delta / 16.6667, 0); // 16.6667 是 1000 / 60，即每帧的时间
+        var slowly = Phaser.Math.Between(1, 5);
+        var vector = new Phaser.Math.Vector2(this.maxSpeed / slowly * delta / 16.6667, 0); // 16.6667 是 1000 / 60，即每帧的时间
         Phaser.Math.Rotate(vector, this.direction);
         this.x += vector.x;
         this.y += vector.y;

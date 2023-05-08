@@ -21,6 +21,7 @@ function preload() {
 }
 
 var role_list = [];
+var food_list=[];
 
 var fpsText;
 function create() {
@@ -28,6 +29,7 @@ function create() {
     this.input.on('pointerdown', function (pointer) {
         // 在点击位置生成一个新的 food 图片
         var newFood = this.add.image(pointer.x, pointer.y, 'food');
+        food_list.push(newFood);
     }, this);
 
     // 添加图片到场景中
