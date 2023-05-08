@@ -1,7 +1,7 @@
 
 class Role extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, texture, frame, hunger) {
-        super(scene, x, y, texture, frame);
+        super(scene, x, y, texture);
         scene.add.existing(this);
 
         this.direction = 0;
@@ -21,14 +21,13 @@ class Role extends Phaser.GameObjects.Sprite {
         if (this.hunger <= 0) {
             var minDistance = Number.MAX_VALUE;
             var targetFood = null;
-            for (var i = 0; i < food_list.length; i++) {
-                var food = food_list[i];
+            this.scene.foodGroup.children.iterate(function (food) {
                 var distance = Phaser.Math.Distance.Between(this.x, this.y, food.x, food.y);
                 if (distance < minDistance) {
                     minDistance = distance;
                     targetFood = food;
                 }
-            }
+            }, this);
             if (targetFood) {
                 this.target = targetFood;
             }
