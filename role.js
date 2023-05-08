@@ -1,12 +1,15 @@
-
-class Role extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, texture, frame, hunger) {
-        super(scene, x, y, texture);
+class Role extends Phaser.GameObjects.Container {
+    constructor(scene, x, y, texture, hunger) {
+        super(scene, x, y);
         scene.add.existing(this);
+
+        this.sprite = scene.add.sprite(0, 0, texture);
+        this.add(this.sprite);
 
         this.direction = 0;
         this.hunger = hunger;
-        this.hungerText = scene.add.text(x, y - 50, ``, { fontSize: '16px', fill: '#fff' });
+        this.hungerText = scene.add.text(-25, -50, ``, { fontSize: '16px', fill: '#fff' });
+        this.add(this.hungerText);
 
         this.last_change_direction_time = 0;
         this.change_time_interval = 1000; // ms
@@ -14,6 +17,9 @@ class Role extends Phaser.GameObjects.Sprite {
         this.hungerSpeed = 22 / 1000; // 每毫秒递减
 
         this.maxSpeed = 0.9
+
+        this.progressBar = scene.add.graphics();
+
     }
 
     update(time, delta) {
@@ -41,8 +47,7 @@ class Role extends Phaser.GameObjects.Sprite {
                 this.direction = angle;
                 this.updatePosition(this.maxSpeed, delta)
             } else {
-                this.hunger += this.target.nutrition;
-                this.target.eaten();
+                this.eat()
                 this.clearAllTargets();
             }
         } else {
@@ -72,6 +77,21 @@ class Role extends Phaser.GameObjects.Sprite {
             this.hunger += this.target.nutrition;
             this.target.eaten();
             this.target = null;
+
+            // 添加Tween动画
+            this.progressBar.clear();
+            this.progressBar.scaleX = 0; // 初始 scaleX 为 0
+            this.progressBar.fillStyle(0xffe600, 1);
+            this.progressBar.fillRect(0, 50, 50, 5); // 去掉偏移量
+            this.progressBar.setX(-25); // 设置进度条的位置为左侧
+            this.scene.tweens.add({
+                targets: this.progressBar,
+                scaleX: 1,
+                duration: 3000,
+                onComplete: () => {
+                    this.progressBar.clear();
+                }
+            });
         }
     }
     // 随机漫步
@@ -99,14 +119,11 @@ class Role extends Phaser.GameObjects.Sprite {
             this.y = gameHeight;
         }
 
-        this.hungerText.x = this.x;
-        this.hungerText.y = this.y;
     }
 
     // 改变角色方向
     changeRoleDirection(time) {
         if (time > this.last_change_direction_time + this.change_time_interval) {
-            console.log("change ", this.hunger)
             this.direction = Phaser.Math.FloatBetween(0, Math.PI * 2);
             this.last_change_direction_time = time;
             this.change_time_interval = Phaser.Math.Between(1, 6) * 1000; // ms
