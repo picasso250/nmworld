@@ -1,5 +1,5 @@
-var gameWidth= 800;
-var gameHeight= 600;
+var gameWidth = 800;
+var gameHeight = 600;
 
 var config = {
     type: Phaser.AUTO,
@@ -25,8 +25,7 @@ function preload() {
 var angle;
 var fpsText;
 function create() {
-    console.log(this)
-    
+
     // 添加图片到场景中
     role = this.add.image(400, 300, 'role');
     // food = this.add.image(400, 300, 'food');
@@ -37,19 +36,25 @@ function create() {
         var newFood = this.add.image(pointer.x, pointer.y, 'food');
     }, this);
 
-     // 添加图片到场景中
-     role1 = this.add.image(400, 300, 'role');
-     role2 = this.add.image(500, 400, 'role');
- 
-     // 为每个 role 添加 text 对象，用于显示饥饿值
-     role1.hungerText = this.add.text(role1.x, role1.y - 50, 'Hunger: 100', { fontSize: '16px', fill: '#fff' });
-     role2.hungerText = this.add.text(role2.x, role2.y - 50, 'Hunger: 100', { fontSize: '16px', fill: '#fff' });
+    // 添加图片到场景中
+    role1 = addRole.call(this, 400, 300, 'role', 11);
+    role2 = addRole.call(this, 500, 400, 'role', 22);
 
     angle = role.angle;
 
     // 创建文本对象
     fpsText = this.add.text(10, 10, 'FPS: 0', { font: '16px Arial', fill: '#ffffff' });
 }
+const HUNGER_MAX = 100;
+
+function addRole(x, y, texture, hunger) {
+    const role = this.add.image(x, y, texture);
+    role.hunger = hunger;
+    role.hungerText = this.add.text(x, y - 50, `Hunger: ${hunger}`, { fontSize: '16px', fill: '#fff' });
+    return role;
+}
+
+
 
 // 定义全局变量
 var last_change_direction_time = 0;
@@ -58,13 +63,17 @@ var change_time_interval = 1000; // ms
 // 更新角色位置和方向
 function updateRolePositionAndDirection(role, angle, delta) {
 
-    // 判断鼠标是否在 role 上方，如果是，则更新对应 role 的饥饿值显示
-    if (role1.getBounds().contains(this.game.input.mousePointer.x, this.game.input.mousePointer.y)) {
-        role1.hungerText.setText('Hunger: ' + role1.hunger);
+    function updateHungerText(role) {
+        if (role.getBounds().contains(this.game.input.mousePointer.x, this.game.input.mousePointer.y)) {
+            role.hungerText.setText(`Hunger: ${role.hunger}`);
+            this.time.delayedCall(3000, () => {
+                role.hungerText.setText('');
+            });
+        }
     }
-    if (role2.getBounds().contains(this.game.input.mousePointer.x, this.game.input.mousePointer.y)) {
-        role2.hungerText.setText('Hunger: ' + role2.hunger);
-    }
+
+    updateHungerText.call(this, role1);
+    updateHungerText.call(this, role2);
 
     var speed = 0.2;
     var distance = Phaser.Math.Between(1, 5);
@@ -103,5 +112,5 @@ function update(time, delta) {
     changeRoleDirection(time);
 
     // 更新角色位置和方向
-    updateRolePositionAndDirection(role, angle, delta);
+    updateRolePositionAndDirection.call(this,role, angle, delta);
 }
