@@ -38,23 +38,55 @@ function create() {
         // 在点击位置生成一个新的 food 图片
         var newFood = new Food(this, pointer.x, pointer.y, 'food', 80);
         this.foodGroup.add(newFood);
+        addMessage("add food", pointer.x, pointer.y)
     }, this);
 
     // 创建文本对象
     fpsText = this.add.text(gameWidth - 80, 10, 'FPS: 0', { font: '16px Arial', fill: '#ffffff' });
     msgText = this.add.text(10, 10, '', { font: '16px Arial', fill: '#ffffff' });
 }
+
 var messages = [];
 
-function addMessage(msg) {
+function addMessage() {
+    var args = Array.prototype.slice.call(arguments);
+    var msg = formatMessage(args);
+    addMessageToQueue(msg);
+    updateMessageText();
+    hideExcessMessages();
+    hideMessageAfterDelay();
+}
+
+function formatMessage(args) {
+    return args.map(function (arg) {
+        if (typeof arg !== 'string') {
+            return arg.toString();
+        }
+        return arg;
+    }).join(' ');
+}
+
+function addMessageToQueue(msg) {
     messages.push(msg);
+}
+
+function updateMessageText() {
     msgText.setText(messages.join("\n"));
+}
+
+function hideExcessMessages() {
     if (msgText.displayHeight > gameHeight - 20) {
         messages.shift();
-        msgText.setText(messages.join("\n"));
+        updateMessageText();
     }
+}
+var msgTimeout;
+function hideMessageAfterDelay() {
     msgText.visible = true;
-    setTimeout(function () {
+    if (msgTimeout) {
+        clearTimeout(msgTimeout);
+    }
+    msgTimeout = setTimeout(function () {
         msgText.visible = false;
     }, 3000); // 3 秒钟后移除最早的一条消息
 }
