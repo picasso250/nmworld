@@ -50,7 +50,7 @@ const HUNGER_MAX = 100;
 function addRole(x, y, texture, hunger) {
     const role = this.add.image(x, y, texture);
     role.hunger = hunger;
-    role.hungerText = this.add.text(x, y - 50, `Hunger: ${hunger}`, { fontSize: '16px', fill: '#fff' });
+    role.hungerText = this.add.text(x, y - 50, ``, { fontSize: '16px', fill: '#fff' });
     return role;
 }
 
@@ -62,18 +62,6 @@ var change_time_interval = 1000; // ms
 
 // 更新角色位置和方向
 function updateRolePositionAndDirection(role, angle, delta) {
-
-    function updateHungerText(role) {
-        if (role.getBounds().contains(this.game.input.mousePointer.x, this.game.input.mousePointer.y)) {
-            role.hungerText.setText(`Hunger: ${role.hunger}`);
-            this.time.delayedCall(3000, () => {
-                role.hungerText.setText('');
-            });
-        }
-    }
-
-    updateHungerText.call(this, role1);
-    updateHungerText.call(this, role2);
 
     var speed = 0.2;
     var distance = Phaser.Math.Between(1, 5);
@@ -113,4 +101,16 @@ function update(time, delta) {
 
     // 更新角色位置和方向
     updateRolePositionAndDirection.call(this,role, angle, delta);
+
+    function updateHungerText(role) {
+        if (role.getBounds().contains(this.game.input.mousePointer.x, this.game.input.mousePointer.y)) {
+            role.hungerText.setText(`Hunger: ${role.hunger}`);
+            this.time.delayedCall(1000, () => {
+                role.hungerText.setText('');
+            });
+        }
+    }
+
+    updateHungerText.call(this, role1);
+    updateHungerText.call(this, role2);
 }
