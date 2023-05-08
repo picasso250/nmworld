@@ -35,7 +35,7 @@ function create() {
     this.foodGroup = this.add.group();
     this.input.on('pointerdown', function (pointer) {
         // 在点击位置生成一个新的 food 图片
-        var newFood = this.add.image(pointer.x, pointer.y, 'food');
+        var newFood = new Food(this, pointer.x, pointer.y, 'food', 80);
         this.foodGroup.add(newFood);
     }, this);
 

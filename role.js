@@ -11,7 +11,7 @@ class Role extends Phaser.GameObjects.Sprite {
         this.last_change_direction_time = 0;
         this.change_time_interval = 1000; // ms
 
-        this.hungerSpeed = 55 / 1000; // 每毫秒递减
+        this.hungerSpeed = 22 / 1000; // 每毫秒递减
 
         this.maxSpeed = 0.9
     }
@@ -41,8 +41,9 @@ class Role extends Phaser.GameObjects.Sprite {
                 this.direction = angle;
                 this.updatePosition(this.maxSpeed, delta)
             } else {
-                // 如果到达目标，则将目标设为 null
-                this.target = null;
+                this.hunger += this.target.nutrition;
+                this.target.eaten();
+                this.clearAllTargets();
             }
         } else {
             // 如果没有目标，则随机移动
@@ -60,7 +61,19 @@ class Role extends Phaser.GameObjects.Sprite {
             this.hunger = 0;
         }
     }
-
+    clearAllTargets() {
+        // 遍历所有的 Role 对象，将它们的目标设为 null
+        this.scene.roleGroup.getChildren().forEach((role) => {
+            role.target = null;
+        });
+    }
+    eat() {
+        if (this.target) {
+            this.hunger += this.target.nutrition;
+            this.target.eaten();
+            this.target = null;
+        }
+    }
     // 随机漫步
     updateRolePositionSlowly(delta) {
         var slowly = Phaser.Math.Between(1, 5);
@@ -102,7 +115,7 @@ class Role extends Phaser.GameObjects.Sprite {
 
     updateHungerText() {
         if (this.getBounds().contains(this.scene.input.mousePointer.x, this.scene.input.mousePointer.y)) {
-            this.hungerText.setText(`Hunger: ${this.hunger}`);
+            this.hungerText.setText(`Hunger: ${Math.floor(this.hunger)}`);
             this.scene.time.delayedCall(1000, () => {
                 this.hungerText.setText('');
             });
