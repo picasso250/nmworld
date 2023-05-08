@@ -80,29 +80,42 @@ class Role extends Phaser.GameObjects.Container {
     }
     eat() {
         if (this.target) {
-            this.isEating = true; // 标记正在吃东西
-            this.hunger += this.target.nutrition;
-            this.target.locked = true; // 锁定食物
-
-            // 添加Tween动画
-            this.progressBar.clear();
-            this.progressBar.scaleX = 0; // 初始 scaleX 为 0
-            this.progressBar.fillStyle(0xffe600, 1);
-            this.progressBar.fillRect(0, 50, 50, 5); // 去掉偏移量
-            this.progressBar.setX(-25); // 设置进度条的位置为左侧
-            this.scene.tweens.add({
-                targets: this.progressBar,
-                scaleX: 1,
-                duration: 3000,
-                onComplete: () => {
-                    this.progressBar.clear();
-                    this.isEating = false; // 标记吃东西结束
-                    if (this.target) {
-                        this.target.destroy(); // 销毁食物
-                    }
-                }
-            });
+            this.updateHunger(); // 更新饥饿值和解锁食物
+            this.playEatAnimation(); // 播放吃东西的Tween动画
         }
+    }
+    
+    /**
+     * 更新角色的饥饿值和解锁食物
+     */
+    updateHunger() {
+        this.isEating = true; // 标记正在吃东西
+        this.hunger += this.target.nutrition;
+        this.target.locked = true; // 锁定食物
+    }
+    
+    /**
+     * 播放吃东西的Tween动画
+     */
+    playEatAnimation() {
+        // 添加Tween动画
+        this.progressBar.clear();
+        this.progressBar.scaleX = 0; // 初始 scaleX 为 0
+        this.progressBar.fillStyle(0xffe600, 1);
+        this.progressBar.fillRect(0, 50, 50, 5); // 去掉偏移量
+        this.progressBar.setX(-25); // 设置进度条的位置为左侧
+        this.scene.tweens.add({
+            targets: this.progressBar,
+            scaleX: 1,
+            duration: 3000,
+            onComplete: () => {
+                this.progressBar.clear();
+                this.isEating = false; // 标记吃东西结束
+                if (this.target) {
+                    this.target.destroy(); // 销毁食物
+                }
+            }
+        });
     }
     // 随机漫步
     updateRolePositionSlowly(delta) {
