@@ -38,7 +38,7 @@ function create() {
         // 在点击位置生成一个新的 food 图片
         var newFood = new Food(this, pointer.x, pointer.y, 'food', 80);
         this.foodGroup.add(newFood);
-        addMessage("add food", pointer.x, pointer.y)
+        addMessage.call(this, "add food", pointer.x, pointer.y)
     }, this);
 
     // 创建文本对象
@@ -54,7 +54,7 @@ function addMessage() {
     addMessageToQueue(msg);
     updateMessageText();
     hideExcessMessages();
-    hideMessageAfterDelay();
+    hideMessageAfterDelay.call(this);
 }
 
 function formatMessage(args) {
@@ -80,15 +80,22 @@ function hideExcessMessages() {
         updateMessageText();
     }
 }
-var msgTimeout;
+var msgTween;
 function hideMessageAfterDelay() {
     msgText.visible = true;
-    if (msgTimeout) {
-        clearTimeout(msgTimeout);
+    msgText.alpha = 1;
+    if (msgTween) {
+        msgTween.stop();
     }
-    msgTimeout = setTimeout(function () {
-        msgText.visible = false;
-    }, 3000); // 3 秒钟后移除最早的一条消息
+    msgTween = this.tweens.add({
+        targets: msgText,
+        alpha: 0,
+        duration: 1000,
+        delay: 3000,
+        onComplete: function () {
+            msgText.visible = false;
+        }
+    });
 }
 function update(time, delta) {
 
