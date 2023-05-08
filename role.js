@@ -11,14 +11,15 @@ class Role extends Phaser.GameObjects.Container {
         this.hungerText = scene.add.text(-25, -50, ``, { fontSize: '16px', fill: '#fff' });
         this.add(this.hungerText);
 
+        this.statusText = scene.add.text(-25, -25, ``, { fontSize: '16px', fill: '#fff' });
+        this.add(this.statusText);
+
         this.last_change_direction_time = 0;
         this.change_time_interval = 1000; // ms
 
         this.hungerSpeed = 22 / 1000; // 每毫秒递减
 
-        this.maxSpeed = 0.9
-
-        this.progressBar = scene.add.graphics();
+        this.maxSpeed = 0.9;
 
     }
 
@@ -49,7 +50,7 @@ class Role extends Phaser.GameObjects.Container {
                 this.direction = angle;
                 this.updatePosition(this.maxSpeed, delta)
             } else {
-                if(!this.target.locked){
+                if (!this.target.locked) {
                     this.eat()
                     this.clearAllTargets();
                 }
@@ -84,7 +85,7 @@ class Role extends Phaser.GameObjects.Container {
             this.playEatAnimation(); // 播放吃东西的Tween动画
         }
     }
-    
+
     /**
      * 更新角色的饥饿值和解锁食物
      */
@@ -93,27 +94,26 @@ class Role extends Phaser.GameObjects.Container {
         this.hunger += this.target.nutrition;
         this.target.locked = true; // 锁定食物
     }
-    
+
     /**
-     * 播放吃东西的Tween动画
+     * 播放吃东西的动画
      */
     playEatAnimation() {
-        // 添加Tween动画
-        this.progressBar.clear();
-        this.progressBar.scaleX = 0; // 初始 scaleX 为 0
-        this.progressBar.fillStyle(0xffe600, 1);
-        this.progressBar.fillRect(0, 50, 50, 5); // 去掉偏移量
-        this.progressBar.setX(-25); // 设置进度条的位置为左侧
-        this.scene.tweens.add({
-            targets: this.progressBar,
-            scaleX: 1,
-            duration: 3000,
-            onComplete: () => {
-                this.progressBar.clear();
-                this.isEating = false; // 标记吃东西结束
-                if (this.target) {
-                    this.target.destroy(); // 销毁食物
-                }
+        this.statusText.setText('吃');
+        this.statusText.alpha = 1;
+        var dotTween = this.scene.tweens.add({
+            targets: this.statusText,
+            duration: 500,
+            alpha: 0,
+            yoyo: true,
+            repeat: -1
+        });
+        this.scene.time.delayedCall(3000, () => {
+            dotTween.stop(); // 停止动画
+            this.statusText.alpha = 0;
+            this.isEating = false; // 标记吃东西结束
+            if (this.target) {
+                this.target.destroy(); // 销毁食物
             }
         });
     }
