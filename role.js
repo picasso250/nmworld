@@ -28,10 +28,12 @@ class Role extends Phaser.GameObjects.Container {
             var minDistance = Number.MAX_VALUE;
             var targetFood = null;
             this.scene.foodGroup.children.iterate(function (food) {
-                var distance = Phaser.Math.Distance.Between(this.x, this.y, food.x, food.y);
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    targetFood = food;
+                if (!food.locked) { // 如果食物没有被锁住，则进行判断
+                    var distance = Phaser.Math.Distance.Between(this.x, this.y, food.x, food.y);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        targetFood = food;
+                    }
                 }
             }, this);
             if (targetFood) {
@@ -47,8 +49,10 @@ class Role extends Phaser.GameObjects.Container {
                 this.direction = angle;
                 this.updatePosition(this.maxSpeed, delta)
             } else {
-                this.eat()
-                this.clearAllTargets();
+                if(!this.target.locked){
+                    this.eat()
+                    this.clearAllTargets();
+                }
             }
         } else {
             // 如果没有目标，则随机移动
@@ -69,14 +73,16 @@ class Role extends Phaser.GameObjects.Container {
     clearAllTargets() {
         // 遍历所有的 Role 对象，将它们的目标设为 null
         this.scene.roleGroup.getChildren().forEach((role) => {
-            role.target = null;
+            if (!role.isEating) { // 如果角色没有在吃东西，则清除其目标
+                role.target = null;
+            }
         });
     }
     eat() {
         if (this.target) {
+            this.isEating = true; // 标记正在吃东西
             this.hunger += this.target.nutrition;
-            this.target.eaten();
-            this.target = null;
+            this.target.locked = true; // 锁定食物
 
             // 添加Tween动画
             this.progressBar.clear();
@@ -90,6 +96,10 @@ class Role extends Phaser.GameObjects.Container {
                 duration: 3000,
                 onComplete: () => {
                     this.progressBar.clear();
+                    this.isEating = false; // 标记吃东西结束
+                    if (this.target) {
+                        this.target.destroy(); // 销毁食物
+                    }
                 }
             });
         }
